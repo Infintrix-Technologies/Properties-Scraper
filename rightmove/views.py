@@ -28,7 +28,7 @@ class RightMovePropertyViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = (
             RightMoveProperty.objects.select_related("area")
-            .prefetch_related("notes")
+            # .prefetch_related("notes")
             .annotate(
                 area_zip=Concat(
                     F("area__name"), Value(" | "), F("area__zip"), Value("")

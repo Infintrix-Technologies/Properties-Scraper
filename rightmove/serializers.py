@@ -12,7 +12,7 @@ class RightMovePropertySerializer(serializers.ModelSerializer):
     area_zip = serializers.ReadOnlyField()
     has_notes = serializers.ReadOnlyField()
 
-    notes = NoteSerializer(many=True)
+    # notes = NoteSerializer(many=True)
 
     class Meta:
         model = RightMoveProperty
