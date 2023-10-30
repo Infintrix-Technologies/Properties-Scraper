@@ -5,6 +5,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django.db.models import F, Value, ExpressionWrapper, BooleanField, Case, When
 from django.db.models.functions import Concat
+from rest_framework.decorators import action
 
 
 class RightMovePropertyViewSet(viewsets.ModelViewSet):
@@ -55,6 +56,14 @@ class RightMovePropertyViewSet(viewsets.ModelViewSet):
         instance.is_deleted = True
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["GET"])
+    def notes(self, request, pk=None):
+        queryset = Note.objects.filter(property=pk).order_by("updatedAt")
+        print(queryset)
+        serializer = NoteSerializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class NotesViewSet(viewsets.ModelViewSet):
