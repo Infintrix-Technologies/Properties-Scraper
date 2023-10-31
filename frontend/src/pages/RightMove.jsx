@@ -5,8 +5,6 @@ const RightMove = () => {
     return (
         <>
             <div className="mycontainer" style={{ padding: "25px" }}>
-
-
                 <Rightmovetable />
             </div>
         </>
