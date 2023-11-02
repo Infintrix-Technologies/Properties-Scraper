@@ -37,3 +37,4 @@ wcwidth==0.2.8
 python-decouple
 psycopg2-binary
 django-celery-beat
+gunicorn
