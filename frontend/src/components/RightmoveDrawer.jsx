@@ -11,8 +11,8 @@ import {
   message,
 } from "antd";
 import React, { useState } from "react";
-import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import api from "../common/api";
 
 const RightmoveDrawer = ({ onClose, open, selectedProperty }) => {
   const [newNote, setNewNote] = useState("");
@@ -37,7 +37,7 @@ const RightmoveDrawer = ({ onClose, open, selectedProperty }) => {
   const notes_query = useQuery(
     ["notes", property_id],
     async () => {
-      return axios.get(`/api/rightmove/properties/${property_id}/notes/`);
+      return api.get(`/api/rightmove/properties/${property_id}/notes/`);
     },
     {
       enabled: !!property_id,
@@ -46,7 +46,7 @@ const RightmoveDrawer = ({ onClose, open, selectedProperty }) => {
 
   const add_new_note_mutation = useMutation({
     mutationFn: (note) => {
-      return axios.post("/api/rightmove/notes/", note);
+      return api.post("/api/rightmove/notes/", note);
     },
     onSuccess: (resp) => {
       queryClient.invalidateQueries("notes");
@@ -57,7 +57,7 @@ const RightmoveDrawer = ({ onClose, open, selectedProperty }) => {
   });
   const delete_note_mutation = useMutation({
     mutationFn: (note_id) => {
-      return axios.delete(`/api/rightmove/notes/${note_id}/`);
+      return api.delete(`/api/rightmove/notes/${note_id}/`);
     },
     onSuccess: (resp) => {
       queryClient.invalidateQueries("notes");

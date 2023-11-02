@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Button, Image, Popconfirm, Table, message } from "antd";
-import axios from "axios";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import { DeleteOutlined, PaperClipOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import RightmoveDrawer from "./RightmoveDrawer";
+import api from "../common/api";
 
 const Rightmovetable = () => {
   const [open, setOpen] = useState(false);
@@ -13,11 +13,11 @@ const Rightmovetable = () => {
   const queryClient = useQueryClient();
 
   const properties_query = useQuery("properties", async () => {
-    return axios.get("/api/rightmove/properties/");
+    return api.get("/api/rightmove/properties/");
   });
 
   const area_query = useQuery("areas", async () => {
-    return axios.get("/api/rightmove/areas/");
+    return api.get("/api/rightmove/areas/");
   });
   const showDrawer = (property) => {
     setSelectedProperty(property);
@@ -30,7 +30,7 @@ const Rightmovetable = () => {
 
   const delete_property_mutation = useMutation({
     mutationFn: (property_id) => {
-      return axios.delete(`/api/rightmove/properties/${property_id}/`);
+      return api.delete(`/api/rightmove/properties/${property_id}/`);
     },
     onSuccess: (resp) => {
       queryClient.invalidateQueries("properties");

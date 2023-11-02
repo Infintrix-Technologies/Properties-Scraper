@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.db.models import F, Value, ExpressionWrapper, BooleanField, Case, When
 from django.db.models.functions import Concat
 from rest_framework.decorators import action
+from rightmove.tasks import scrape_properties
 
 
 class RightMovePropertyViewSet(viewsets.ModelViewSet):
@@ -38,8 +39,7 @@ class RightMovePropertyViewSet(viewsets.ModelViewSet):
                     default=Value(True),
                     output_field=BooleanField(),
                 ),
-            )
-            .order_by("updatedAt")
+            ).order_by("updatedAt")
         )
 
         # Check if 'include_deleted' query parameter is present and set to 1
@@ -64,6 +64,10 @@ class RightMovePropertyViewSet(viewsets.ModelViewSet):
         serializer = NoteSerializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # def list(self, request, *args, **kwargs):
+    #     scrape_properties.delay()
+    #     return super().list(request, *args, **kwargs)
 
 
 class NotesViewSet(viewsets.ModelViewSet):

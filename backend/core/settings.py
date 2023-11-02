@@ -2,6 +2,7 @@ from celery.schedules import crontab
 
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-#w^4n_i$wgeiw0(mj8=rkvk74k!k7r7ia0-qw9*c#%lz%h))!%"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,7 +33,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "debug_toolbar",
     "corsheaders",
-    # "rest_framework.authtoken",
+    "rest_framework.authtoken",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -78,14 +80,23 @@ WSGI_APPLICATION = "core.wsgi.application"
 #     }
 # }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": config("MYSQL_DATABASE"),
+#         "USER": 'root',
+#         "PASSWORD": config("MYSQL_ROOT_PASSWORD"),
+#         "HOST": "mysql",  # Or an IP Address that your DB is hosted on
+
+#     }
+# }
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "rightmove",
-        "USER": "root",
-        "PASSWORD": "12345678",
-        "HOST": "localhost",  # Or an IP Address that your DB is hosted on
-        "PORT": "3306",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("POSTGRES_DB"),
+        "USER": config("POSTGRES_USER"),
+        "PASSWORD": config("POSTGRES_PASSWORD"),
+        "HOST": config("POSTGRES_HOST"),
     }
 }
 
@@ -125,7 +136,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join("static")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend", "build", "static")]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend", "build", "static")]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -136,20 +147,20 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/1"
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/1"
 
 BROKER_CONNECTION_RETRY = True
 BROKER_CONNECTION_MAX_RETRIES = 0
 BROKER_CONNECTION_TIMEOUT = 120
 
 
-CELERY_BEAT_SCHEDULE = {
-    "call-api-every-10-minutes": {
-        "task": "rightmove.tasks.scrape_properties",
-        "schedule": crontab(minute="*/60"),
-    },
-}
+# CELERY_BEAT_SCHEDULE = {
+#     "scrape_pproperties_every_minutes": {
+#         "task": "rightmove.tasks.scrape_properties",
+#         "schedule": crontab(minute="*/1"),
+#     },
+# }
 
 REST_FRAMEWORK = {
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
@@ -171,3 +182,5 @@ INTERNAL_IPS = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+LOGIN_URL = "/admin/login/"

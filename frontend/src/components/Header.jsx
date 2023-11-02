@@ -12,7 +12,7 @@ const TopNavbar = () => {
                     alt="Logo"
                     style={{ height: 30, width: 30, marginRight: 10 }}
                 /> */}
-        Aalain Cube
+        Alain Cube
       </Menu.Item>
       <Menu.Item key="home" icon={<HomeOutlined />}>
         <Link to="/">Right Move</Link>
