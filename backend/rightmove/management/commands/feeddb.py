@@ -3,6 +3,8 @@ import threading
 from django.core.management.base import BaseCommand
 from rightmove.models import Area
 from rightmove.tasks import scrape_properties
+from django.contrib.auth.models import User
+from django.core.management import call_command
 
 
 class Command(BaseCommand):
@@ -11,6 +13,21 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Define the commands to run in parallel
         self.create_areas()
+        self.create_superuser()
+
+    def create_superuser(self):
+        # Check if the superuser already exists
+        if not User.objects.filter(username="admin").exists():
+            user = User()
+            user.username = "admin"
+            user.is_superuser = True
+            user.is_staff = True
+            user.is_active = True
+            user.set_password = "1234"
+            user.save()
+            self.stdout.write(self.style.SUCCESS("Superuser created successfully."))
+        else:
+            self.stdout.write(self.style.SUCCESS("Superuser already exists."))
 
     def create_areas(self):
         areas_to_create = [
