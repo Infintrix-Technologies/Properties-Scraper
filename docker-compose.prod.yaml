@@ -1,34 +1,93 @@
-version: '3'
+version: "3"
+
 services:
-  django:
-    build:
-      context: ./backend  # Path to your Django project directory
-    ports:
-      - "8000:8000"  # Map container port 8000 to host port 8000
-    environment:
-      - DJANGO_SETTINGS_MODULE=your_project.settings
-      - DATABASE_URL=mysql://your_db_user:your_db_password@mysql:3306/your_db_name
+  backend:
+    build: ./backend
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py feeddb &&
+             python manage.py runserver 0.0.0.0:8000"
+    #  gunicorn core.wsgi:application --bind 0.0.0.0:8000 --access-logfile access.log"
     volumes:
-      - ./backend:/app  # Mount the Django project code into the container
-    depends_on:
-      - mysql  # Define the MySQL service as a dependency
-
-  mysql:
-    image: mysql:5.7  # Use a MySQL 5.7 container, you can choose a different version
-    environment:
-      MYSQL_DATABASE: your_db_name
-      MYSQL_USER: your_db_user
-      MYSQL_PASSWORD: your_db_password
-      MYSQL_ROOT_PASSWORD: your_root_password
-
-  react:
-    build:
-      context: ./frontend  # Path to your React project directory
+      - ./backend:/django_app
     ports:
-      - "3000:3000"  # Map container port 3000 to host port 3000
+      - "8000:8000"
+    env_file:
+      - .env.prod
+
+  celery:
+    restart: unless-stopped
+    build:
+      context: ./backend
+    command: celery -A core worker -l INFO
     volumes:
-      - ./frontend:/app  # Mount the React project code into the container
+      - ./backend:/django_app
+    env_file:
+      - .env.prod
     depends_on:
-      - django  # Define the Django service as a dependency
-    environment:
-      - REACT_APP_API_URL=http://django:8000  # Set the API URL for your React app
+      - redis
+
+  celery_beat:
+    restart: unless-stopped
+    build:
+      context: ./backend
+    command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - ./backend:/django_app
+    env_file:
+      - .env.prod
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    env_file:
+      - .env.prod
+
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    restart: always
+    env_file:
+      - .env.prod
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    ports:
+      - "5050:80"
+
+  frontend:
+    image: node:18-alpine # Use the appropriate Node.js version
+    container_name: react_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    command: npm run build # Build your frontend application
+    env_file:
+      - .env.prod # Use a separate .env file for production
+    expose:
+      - "3000" # Expose the internal port
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-config:/etc/nginx/conf.d # Mount Nginx configuration
+      - ./frontend/build:/usr/share/nginx/html # Serve the built frontend
+    depends_on:
+      - frontend
+
+volumes:
+  postgres_data:
