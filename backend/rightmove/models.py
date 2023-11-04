@@ -28,6 +28,10 @@ class RightMoveProperty(models.Model):
     class Meta:
         db_table = "rightmove_properties"
 
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+
 
 class Note(models.Model):
     text = models.TextField(max_length=255)

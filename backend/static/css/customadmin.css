@@ -1,0 +1,34 @@
+#main{
+    background : #f1f1f1;
+}
+
+.active {
+    background: green;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.sold {
+    background: rgb(242, 2, 2);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.expired {
+    background: rgb(251, 255, 0);
+    color: black;
+    padding: 3px 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+.inactive {
+    background: rgb(4, 0, 255);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 10px;
+    text-align: center;
+}
