@@ -64,30 +64,30 @@ services:
     ports:
       - "5050:80"
 
-  frontend:
-    image: node:18-alpine # Use the appropriate Node.js version
-    container_name: react_frontend
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-    command: npm run build # Build your frontend application
-    env_file:
-      - .env.prod # Use a separate .env file for production
-    expose:
-      - "3000" # Expose the internal port
-    depends_on:
-      - backend
+  # frontend:
+  #   image: node:18-alpine # Use the appropriate Node.js version
+  #   container_name: react_frontend
+  #   working_dir: /app
+  #   volumes:
+  #     - ./frontend:/app
+  #   command: npm run build # Build your frontend application
+  #   env_file:
+  #     - .env.prod # Use a separate .env file for production
+  #   expose:
+  #     - "3000" # Expose the internal port
+  #   depends_on:
+  #     - backend
 
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx-config:/etc/nginx/conf.d # Mount Nginx configuration
-      - ./frontend/build:/usr/share/nginx/html # Serve the built frontend
-    depends_on:
-      - frontend
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx-config:/etc/nginx/conf.d # Mount Nginx configuration
+  #     - ./frontend/build:/usr/share/nginx/html # Serve the built frontend
+  #   depends_on:
+  #     - frontend
 
 volumes:
   postgres_data:
