@@ -56,7 +56,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             os.path.join(BASE_DIR, "templates"),
-            os.path.join(BASE_DIR, "frontend", "build"),
+            # os.path.join(BASE_DIR, "frontend", "build"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -139,6 +139,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join("static")
+STATICFILES_DIRS = [
+    BASE_DIR / "assets",
+    # os.path.join(BASE_DIR,'frontend/build/static'),
+]
+
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend", "build", "static")]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -199,8 +204,3 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 LOGIN_URL = "/admin/login/"
 ADMIN_SITE_HEADER = "My shiny new administration"
-
-STATICFILES_DIRS = [
-    BASE_DIR / "assets",
-    # os.path.join(BASE_DIR,'frontend/build/static'),
-]
