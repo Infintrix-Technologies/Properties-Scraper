@@ -48,15 +48,14 @@ class RightMovePropertyAdmin(admin.ModelAdmin):
         "is_deleted",
     ]
     actions = [delete_all]
-    search_fields = ["property_id", "area_name"]
+    search_fields = ["property_id", "area__name"]
     list_filter = [
         "is_deleted",
-        "area__name",
         "area__zip",
         "bedrooms",
         "bathrooms",
     ]
-    list_per_page = 20
+    list_per_page = 10
     inlines = [
         NotesInlineAdmin,
     ]
@@ -67,8 +66,7 @@ class RightMovePropertyAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         queryset = (
-            models.RightMoveProperty.objects
-            .select_related("area")
+            models.RightMoveProperty.objects.select_related("area")
             .prefetch_related("notes")
             .annotate(
                 area_zip=Concat(
