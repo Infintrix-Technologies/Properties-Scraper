@@ -183,24 +183,24 @@ REST_FRAMEWORK = {
     ],
 }
 
-
-def show_toolbar(request):
-    return True
-
-
-DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
-}
-
-# or
-
-INTERNAL_IPS = ["127.0.0.1"]
-import socket
-
-# tricks to have debug toolbar when developing with docker
-ip = socket.gethostbyname(socket.gethostname())
-INTERNAL_IPS += [ip[:-1] + "1"]
-CORS_ALLOW_ALL_ORIGINS = True
-
 LOGIN_URL = "/admin/login/"
-ADMIN_SITE_HEADER = "My shiny new administration"
+
+
+
+# def show_toolbar(request):
+#     return True
+
+
+# DEBUG_TOOLBAR_CONFIG = {
+#     "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+# }
+
+# # or
+
+# INTERNAL_IPS = ["127.0.0.1"]
+# import socket
+
+# # tricks to have debug toolbar when developing with docker
+# ip = socket.gethostbyname(socket.gethostname())
+# INTERNAL_IPS += [ip[:-1] + "1"]
+# CORS_ALLOW_ALL_ORIGINS = True
